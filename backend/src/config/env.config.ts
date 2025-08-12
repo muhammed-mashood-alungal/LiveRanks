@@ -14,7 +14,4 @@ export const env = {
   get REDIS_HOST(){
     return process.env.REDIS_HOST
   },
-  get MONGO_URI(){
-    return process.env.MONGO_URI
-  }
 };

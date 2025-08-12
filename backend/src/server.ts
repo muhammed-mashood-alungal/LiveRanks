@@ -5,7 +5,6 @@ import http from "http";
 import { connectRedis } from "./config/redis.config";
 import { Server } from "socket.io";
 import { env } from "./config/env.config";
-import { connectDB } from "./config/mongodb.config";
 import socketLoader from "./socket";
 
 dotenv.config();
@@ -15,7 +14,7 @@ async function startServer() {
   app.use(express.json());
   app.use(morgan("dev"));
 
-  await Promise.all([connectRedis(), connectDB()]);
+  await Promise.all([connectRedis()]);
 
   const server = http.createServer(app);
   const io = new Server(server);
