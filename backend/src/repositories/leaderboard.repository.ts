@@ -1,27 +1,21 @@
 import { type RedisClientType } from "redis";
 import { ILeaderBoardRepository } from "./leaderboard.interface";
 import { ILeaderType } from "@/types/leaderboard-data.type";
+import { getRedisClient } from "@/config/redis.config";
 
 export class LeaderboardRepository implements ILeaderBoardRepository {
-  constructor(private client: RedisClientType) {}
+  private get client(): RedisClientType {
+    return getRedisClient();
+  }
 
   async fetchLeaderBoard(
     leaderBoard: string,
     limit: number = 10
   ): Promise<ILeaderType[]> {
-    const flatData = await this.client.zRangeWithScores(
-      leaderBoard,
-      0,
-      limit - 1,
-      {
-        REV: true,
-      }
-    );
+    const top = await this.client.zRangeWithScores(leaderBoard, 0, limit - 1, {
+      REV: true,
+    });
 
-    const top = [];
-    for (let i = 0; i < flatData.length; i += 2) {
-      top.push({ name: flatData[i], score: Number(flatData[i + 1]) });
-    }
     return top;
   }
 
@@ -34,7 +28,7 @@ export class LeaderboardRepository implements ILeaderBoardRepository {
 
     const playerData = {
       value: player,
-      score: (currentScore || 0) + delta,
+      score: (currentScore || 0) + Number(delta),
     };
 
     await this.client.zAdd(leaderBoard, [playerData]);

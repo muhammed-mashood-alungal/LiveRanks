@@ -1,34 +1,32 @@
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import http from 'http'
-import {Server} from 'socket.io'
-import { env } from "./config/env.config";
+import http from "http";
 import { connectRedis } from "./config/redis.config";
+import { Server } from "socket.io";
+import { env } from "./config/env.config";
 import { connectDB } from "./config/mongodb.config";
 import socketLoader from "./socket";
 
 dotenv.config();
-const app = express();
+async function startServer() {
+  const app = express();
 
-app.use(express.json());
+  app.use(express.json());
+  app.use(morgan("dev"));
 
-connectRedis()
-connectDB()
+  await Promise.all([connectRedis(), connectDB()]);
 
-app.use(morgan('dev'))
+  const server = http.createServer(app);
+  const io = new Server(server);
+  socketLoader(io);
 
+  server.listen(env.PORT, () => {
+    console.log(`Server Started on Port= ${env.PORT}`);
+  });
+}
 
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-  },
+startServer().catch((error) => {
+  console.error("Failed to start server:", error);
+  process.exit(1);
 });
-socketLoader(io)
-
-server.listen(env.PORT, () => {
-  console.log(`Server Started on Port= ${env.PORT}`);
-});
-

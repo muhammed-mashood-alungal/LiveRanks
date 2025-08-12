@@ -9,12 +9,13 @@ export const scoreSocket = (
   leaderBoardService: ILeaderBoardService,
   players: Map<string, string>
 ) => {
-  socket.on(EVENTS.UPDATE_SCORE, async ({ player, delta, region, mode }) => {
+  socket.on(EVENTS.UPDATE_SCORE, async (data) => {
+    const { delta, region, mode } = JSON.parse(data);
     const room = getRoomName(region, mode);
     const updatedLeaderBoard = await leaderBoardService.updateLeaderBoard(
       region,
       mode,
-      player,
+      players.get(socket.id),
       delta
     );
     io.to(room).emit(EVENTS.UPDATE_LEADERBOARD, updatedLeaderBoard);

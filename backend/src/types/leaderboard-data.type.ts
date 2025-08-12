@@ -1,3 +1,3 @@
 export interface ILeaderType{
-     name: string; score: number 
+     value: string; score: number 
 }

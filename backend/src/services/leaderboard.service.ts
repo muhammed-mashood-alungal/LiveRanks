@@ -6,7 +6,11 @@ import { ILeaderType } from "@/types/leaderboard-data.type";
 export class LeaderBoardServices implements ILeaderBoardService {
   constructor(private leaderBoardRepo: ILeaderBoardRepository) {}
 
-  async fetchLeaderBoard(region: string, mode: string, limit?: number) : Promise<ILeaderType[]> {
+  async fetchLeaderBoard(
+    region: string,
+    mode: string,
+    limit?: number
+  ): Promise<ILeaderType[]> {
     const leaderBoardName = await leaderboardName(region, mode);
     return this.leaderBoardRepo.fetchLeaderBoard(leaderBoardName, limit);
   }
@@ -17,7 +21,7 @@ export class LeaderBoardServices implements ILeaderBoardService {
     player: string,
     delta: number,
     limit?: number
-  ) :Promise<ILeaderType[]>{
+  ): Promise<ILeaderType[]> {
     const leaderBoardName = leaderboardName(region, mode);
     await this.leaderBoardRepo.updateLeaderBoard(
       leaderBoardName,

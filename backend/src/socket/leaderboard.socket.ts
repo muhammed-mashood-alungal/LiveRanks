@@ -9,7 +9,8 @@ export const leaderboardSocket = (
   leaderBoardService: ILeaderBoardService,
   players: Map<string, string>
 ) => {
-  socket.on(EVENTS.SUBSCRIBE_LEADERBOARD, async ({ region, mode }) => {
+  socket.on(EVENTS.SUBSCRIBE_LEADERBOARD, async (data) => {
+    const {region, mode} = JSON.parse(data)
     const room = getRoomName(region, mode);
     socket.join(room);
 
@@ -19,7 +20,6 @@ export const leaderboardSocket = (
       players.get(socket.id),
       0
     );
-    
-    socket.emit(EVENTS.UPDATE_LEADERBOARD, topPlayers);
+    io.to(room).emit(EVENTS.UPDATE_LEADERBOARD, topPlayers);
   });
 };
