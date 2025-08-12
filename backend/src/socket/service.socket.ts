@@ -1,0 +1,1 @@
+export const getRoomName=( region : string, mode:string )=> `leaderboard:${mode}:${region}`
