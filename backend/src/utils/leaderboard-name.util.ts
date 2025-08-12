@@ -1,0 +1,1 @@
+export const leaderboardName=(region : string , mode : string)=> `${region}:${mode}`
