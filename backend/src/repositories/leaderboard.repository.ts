@@ -34,7 +34,7 @@ export class LeaderboardRepository implements ILeaderBoardRepository {
 
     const playerData = {
       value: player,
-      score: currentScore + delta,
+      score: (currentScore || 0) + delta,
     };
 
     await this.client.zAdd(leaderBoard, [playerData]);

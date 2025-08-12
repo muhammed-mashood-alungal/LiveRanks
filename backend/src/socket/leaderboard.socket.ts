@@ -6,13 +6,20 @@ import { ILeaderBoardService } from "@/services/leaderboard.interface.service";
 export const leaderboardSocket = (
   io: Server,
   socket: Socket,
-  leaderBoardService: ILeaderBoardService
+  leaderBoardService: ILeaderBoardService,
+  players: Map<string, string>
 ) => {
   socket.on(EVENTS.SUBSCRIBE_LEADERBOARD, async ({ region, mode }) => {
     const room = getRoomName(region, mode);
     socket.join(room);
 
-    const topPlayers = await leaderBoardService.fetchLeaderBoard(region, mode);
+    const topPlayers = await leaderBoardService.updateLeaderBoard(
+      region,
+      mode,
+      players.get(socket.id),
+      0
+    );
+    
     socket.emit(EVENTS.UPDATE_LEADERBOARD, topPlayers);
   });
 };
